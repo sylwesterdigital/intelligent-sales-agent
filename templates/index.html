@@ -1,0 +1,211 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row hero align-items-start g-4">
+  <div class="col-lg-6">
+    <h1 class="display-6 fw-bold mb-3">
+      Build an <span class="gradient-text">AI Sales Engine</span>
+      that runs on autopilot
+    </h1>
+    <p class="text-muted mb-4">
+      Scrape, enrich, qualify, and send hyper-personalized multi-channel outreach
+      to your ideal customers — from a single control panel.
+    </p>
+
+    <form method="post" action="{{ url_for('run') }}" class="card p-3 p-md-4 mb-3">
+      <h5 class="mb-3">1. Define your ICP</h5>
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label small text-uppercase text-muted">Job Title</label>
+          <input type="text" name="job_title" class="form-control form-control-sm"
+          value="{{ icp.job_title if icp else 'CEO' }}">
+        </div>
+        <div class="col-md-6">
+          <label class="form-label small text-uppercase text-muted">Company</label>
+          <input type="text" name="company" class="form-control form-control-sm"
+          value="{{ icp.company if icp else 'Digital Marketing Agency' }}">
+        </div>
+        <div class="col-md-6">
+          <label class="form-label small text-uppercase text-muted">Location</label>
+          <input type="text" name="location" class="form-control form-control-sm"
+          value="{{ icp.location if icp else 'New York' }}">
+        </div>
+        <div class="col-md-3">
+          <label class="form-label small text-uppercase text-muted">Size Min</label>
+          <input type="number" name="size_min" class="form-control form-control-sm"
+          value="{{ icp.size_min if icp else 1 }}">
+        </div>
+        <div class="col-md-3">
+          <label class="form-label small text-uppercase text-muted">Size Max</label>
+          <input type="number" name="size_max" class="form-control form-control-sm"
+          value="{{ icp.size_max if icp else 50 }}">
+        </div>
+        <div class="col-md-6">
+          <label class="form-label small text-uppercase text-muted">Industry</label>
+          <input type="text" name="industry" class="form-control form-control-sm"
+          value="{{ icp.industry if icp else 'Marketing' }}">
+        </div>
+        <div class="col-md-6">
+          <label class="form-label small text-uppercase text-muted">Lead limit</label>
+          <input type="number" name="lead_limit" min="1" max="100"
+          class="form-control form-control-sm" value="10">
+        </div>
+        <div class="col-12">
+          <label class="form-label small text-uppercase text-muted">Your value proposition</label>
+          <textarea name="value_prop" rows="3" class="form-control form-control-sm"
+          placeholder="What outcome do you deliver? How is it different?">{{ icp.value_prop if icp else "We build AI-powered outbound machines that create a consistent flow of qualified demos for agencies." }}</textarea>
+        </div>
+      </div>
+
+      <div class="d-flex align-items-center justify-content-between mt-3">
+        <button type="submit" class="btn btn-sm btn-success px-3">
+          🚀 Run AI Sales Machine
+        </button>
+        <div class="small text-muted">
+          <span class="pill-green status-pill">Connected</span>
+          <span class="ms-2">N8N · Sheets · Unipile (stubs)</span>
+        </div>
+      </div>
+    </form>
+
+    <div class="small text-muted">
+      PS. “Green boxes = it works” — adapt this panel to mirror the N8N workflow.
+    </div>
+  </div>
+
+  <div class="col-lg-6">
+    <div class="card mb-3 p-3 p-md-4">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <h5 class="mb-0">Pipeline status</h5>
+        <span class="pill-green status-pill">Live</span>
+      </div>
+      <div class="row g-2">
+        <div class="col-6">
+          <div class="border rounded p-2 h-100">
+            <div class="small text-muted text-uppercase mb-1">Scrape & Enrich</div>
+            <div>Leads sourced & enriched from Apollo / Google Search.</div>
+          </div>
+        </div>
+        <div class="col-6">
+          <div class="border rounded p-2 h-100">
+            <div class="small text-muted text-uppercase mb-1">Qualify</div>
+            <div>AI scores each prospect 0–10 based on ICP fit.</div>
+          </div>
+        </div>
+        <div class="col-6">
+          <div class="border rounded p-2 h-100 mt-2">
+            <div class="small text-muted text-uppercase mb-1">Sequencing</div>
+            <div>Multi-step LinkedIn + email sequences generated.</div>
+          </div>
+        </div>
+        <div class="col-6">
+          <div class="border rounded p-2 h-100 mt-2">
+            <div class="small text-muted text-uppercase mb-1">Reply Detection</div>
+            <div>Replies detected; sequences paused when engaged.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card p-3 p-md-4">
+      <h6 class="mb-2">Want the full breakdown video?</h6>
+      <p class="small text-muted mb-2">
+        Comment <span class="fw-semibold">“SALES”</span> on the LinkedIn post or trigger an automation here to send a link
+        via email / DM.
+      </p>
+      <button class="btn btn-outline-light btn-sm" type="button" disabled>
+        Coming soon: One-click “Send video to warm leads”
+      </button>
+    </div>
+  </div>
+</div>
+
+<hr class="border-secondary my-4">
+
+<div class="row">
+  <div class="col-12 mb-2 d-flex justify-content-between align-items-center">
+    <h5 class="mb-0">Qualified leads</h5>
+    <span class="small text-muted">
+      {{ leads|length }} lead{{ '' if leads|length == 1 else 's' }} in current run
+    </span>
+  </div>
+
+  <div class="col-12">
+    {% if leads %}
+    <div class="table-responsive">
+      <table class="table table-sm align-middle text-white">
+        <thead class="text-muted small">
+          <tr>
+            <th scope="col">Lead</th>
+            <th scope="col">Company</th>
+            <th scope="col">Location</th>
+            <th scope="col">Email</th>
+            <th scope="col">Score</th>
+            <th scope="col">Status</th>
+            <th scope="col">Channels</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for lead in leads %}
+          {% set score = lead.qualification_score %}
+          {% if score >= 8 %}
+          {% set score_class = 'pill-green' %}
+          {% elif score >= 5 %}
+          {% set score_class = 'pill-amber' %}
+          {% else %}
+          {% set score_class = 'pill-red' %}
+          {% endif %}
+          <tr>
+            <td>
+              <div class="fw-semibold">
+                {{ lead.first_name }} {{ lead.last_name }}
+              </div>
+              <div class="small text-muted">
+                {{ lead.job_title }}
+              </div>
+            </td>
+            <td>
+              <div>{{ lead.company_name }}</div>
+              <div class="small text-muted">
+                <a href="{{ lead.website }}" target="_blank" rel="noopener">
+                  Website
+                </a>
+                ·
+                <a href="{{ lead.linkedin_url }}" target="_blank" rel="noopener">
+                  LinkedIn
+                </a>
+              </div>
+            </td>
+            <td class="small">{{ lead.location }}</td>
+            <td class="small">
+              <a href="mailto:{{ lead.email }}">{{ lead.email }}</a>
+            </td>
+            <td>
+              <span class="badge-score {{ score_class }}">
+                {{ "%.1f"|format(score) }}/10
+              </span>
+            </td>
+            <td class="small text-uppercase text-muted">
+              {{ lead.status }}
+            </td>
+            <td class="small">
+              {% if lead.channel_sequences.email %}
+              <span class="badge bg-success-subtle text-success me-1">Email</span>
+              {% endif %}
+              {% if lead.channel_sequences.linkedin %}
+              <span class="badge bg-primary-subtle text-info">LinkedIn</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="text-muted small">
+      No leads yet. Configure your ICP and run the engine to see qualified prospects here.
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
